@@ -1,0 +1,24 @@
+{
+  "name": "@maplat/interface",
+  "version": "0.0.0",
+  "description": "@maplat/interface: Maplat のインターフェース群を集約する公開契約",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Kohei Otsuka, Code for History",
+  "sideEffects": false,
+  "engines": { "pnpm": ">=9" },
+  "files": ["dist/"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./core": { "types": "./dist/core/index.d.ts", "import": "./dist/core/index.js" }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run && node --test scripts/verify/exports-manifest.test.mjs",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "verify:exports-manifest": "node scripts/verify/exports-manifest.mjs",
+    "verify": "node scripts/verify/exports-manifest.mjs"
+  },
+  "repository": { "type": "git", "url": "git+https://github.com/code4history/MaplatInterface.git" },
+  "devDependencies": { "typescript": "5.9.3", "vite": "7.3.6", "vitest": "3.2.7" }
+}
