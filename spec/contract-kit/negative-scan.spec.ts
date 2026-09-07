@@ -130,10 +130,12 @@ test("N-P2 合成 needle ファイル（xx-yy + alias xxYy、baseline [synth]）
   expect(r.ok).toBe(true);
   expect(r.warnings).toEqual([]);
 });
-test("N-P4 selfmatch が実測値（正例は true、退化した compile を注入すると selfmatch=false で赤 — MIN-5）", () => {
+test("N-P4 selfmatch が実測値（正例は true。tokens は value から導出）", () => {
   const ok = checkNeedleFile(needleFile());
   expect(ok.needles[0]?.selfmatch).toBe(true);
   expect(ok.needles[0]?.tokens).toBe(tokens("xx-yy").length);
+});
+test("N-N9 退化した compile を注入すると自己一致が破れ赤（検査器自身の regression。K5 / m1-t2 N2）", () => {
   const broken = checkNeedleFile(needleFile(), { compile: () => /^$/u });
   expect(broken.ok).toBe(false);
   expect(broken.failures.some((f) => f.includes("自己一致"))).toBe(true);
@@ -158,6 +160,21 @@ redNeedle("N-N8 excluded の key を needles/baseline にも置く → 赤（矛
 test("N-N7 excluded entry の value をコーパスに無い語にする → 走査 0 件（呼び手が「再 admit 候補」で赤にする）", () => {
   const hits = scanDocs([doc("clean content")], [{ key: "ex", value: "xx-yy", aliases: [] }]).hits;
   expect(hits.length).toBe(0);
+});
+test("N-P1 合成 needle 正本（checkNeedleFile ok）+ clean 全種別走査 → hits 0（健全性の純関数面。実 needle・実コーパス統合は driver 側）", () => {
+  const nf = checkNeedleFile(needleFile());
+  expect(nf.ok).toBe(true);
+  const r = scanArtifacts({ artifacts: baseArtifacts(), needles: NEEDLE_LIST, allowedExposures: [], read: cleanRead });
+  expect(r.hits.length).toBe(0);
+  expect(r.failures).toEqual([]);
+});
+test("S-N10 不正な needle 正本（N0 違反: schema_version 違い / value 空）を checkNeedleFile に渡す → 赤（S5 → K5。純関数面。--needles の path 不在は driver S-N26）", () => {
+  const bySchema = checkNeedleFile({ ...needleFile(), schema_version: 0 });
+  expect(bySchema.ok).toBe(false);
+  expect(bySchema.failures.some((f) => f.includes("schema_version"))).toBe(true);
+  const byValue = checkNeedleFile(needleFile((j) => (((j.needles as unknown[])[0]) as { value: string }).value = ""));
+  expect(byValue.ok).toBe(false);
+  expect(byValue.failures.some((f) => f.includes("value"))).toBe(true);
 });
 
 // ---- K + S（純関数面）: scanArtifacts の判定 K0〜K9（m1-t3 設計 §5.4） ----
@@ -189,10 +206,15 @@ test("K-N1 未知の種別を足す → 赤（allowlist）", () => {
   expect(r.failures.some((f) => f.includes("未知の artifact 種別"))).toBe(true);
 });
 
-test("S-N2/K-N2 present 種別で paths: [] → 赤（0 件を緑にしない）", () => {
+test("S-N2 present 種別（interface-repo-tracked-files）で paths: [] → 赤（S1 → K1。0 件を緑にしない）", () => {
   const artifacts = baseArtifacts().map((a) => (a.kind === "interface-repo-tracked-files" ? { ...a, paths: [] } : a));
   const r = scanArtifacts({ artifacts, needles: NEEDLE_LIST, allowedExposures: [], read: cleanRead });
   expect(r.failures.some((f) => f.includes("paths が 0"))).toBe(true);
+});
+test("K-N2 pending 種別を present と偽って paths: [] → 赤（K4/K1）", () => {
+  const artifacts = baseArtifacts().map((a) => (a.kind === "app-settings-schema" ? { ...a, status: "present" as const, paths: [] } : a));
+  const r = scanArtifacts({ artifacts, needles: NEEDLE_LIST, allowedExposures: [], read: cleanRead });
+  expect(r.failures.some((f) => f.includes("paths が 0") && f.includes("app-settings-schema"))).toBe(true);
 });
 
 test("S-N27 needles: [] → 赤（0 件検査に needles が入っている）", () => {
@@ -200,7 +222,7 @@ test("S-N27 needles: [] → 赤（0 件検査に needles が入っている）",
   expect(r.failures.some((f) => f.includes("needles が 0 件"))).toBe(true);
 });
 
-test("S-N3/K0 needle 一致 1 件以上 → HIT 行（doc-id / 行 / key）が hits に在り赤", () => {
+test("S-N3 needle 一致 1 件以上 → HIT 行（doc-id / 行 / key）が hits に在り赤（S3 → K0）", () => {
   const read = (p: string) => (p === "a.ts" ? { id: "tracked#0", name: "a.ts", text: "xx-yy here\n" } : cleanRead(p));
   const r = scanArtifacts({ artifacts: baseArtifacts(), needles: NEEDLE_LIST, allowedExposures: [], read });
   expect(r.hits.length).toBeGreaterThanOrEqual(1);
@@ -210,10 +232,25 @@ test("S-N3/K0 needle 一致 1 件以上 → HIT 行（doc-id / 行 / key）が h
   expect(r.failures.some((f) => f.includes("hits="))).toBe(true);
 });
 
-test("S-P1/K2 clean な artifact 一覧 + 合成 needle → hits=0・failures=0（OK の前提）", () => {
+test("S-P1 clean な artifact 一覧 + 合成 needle → hits=0・failures=0（S4 → K2。OK の前提）", () => {
   const r = scanArtifacts({ artifacts: baseArtifacts(), needles: NEEDLE_LIST, allowedExposures: [], read: cleanRead });
   expect(r.hits.length).toBe(0);
   expect(r.failures).toEqual([]);
+});
+test("S-P4 漏洩 commit を祖先に持たない履歴相当（history 面も clean）→ hits=0（S13 正例。合成 git repo は driver S-P2）", () => {
+  const r = scanArtifacts({ artifacts: baseArtifacts(), needles: NEEDLE_LIST, allowedExposures: [], read: cleanRead });
+  expect(r.hits.length).toBe(0);
+  expect(r.counts["interface-repo-history"]).toBeGreaterThan(0);
+});
+test("S-N16 interface-repo-history の複数 path のうち祖先 blob にだけ needle → HIT（走査面を drop しない。S13。祖先 blob の収集は driver S-N5）", () => {
+  const read = (p: string) => (p === "blob:abc" ? { id: "blob:abc", name: "blob:abc", text: "xx-yy\n" } : cleanRead(p));
+  const r = scanArtifacts({ artifacts: baseArtifacts(), needles: NEEDLE_LIST, allowedExposures: [], read });
+  expect(r.hits.some((h) => h.doc === "blob:abc")).toBe(true);
+});
+test("S-N12 hit は match（一致文字列）を持ち、既定報告は value を出さない契約の純関数側を満たす（S3。既定出力の value 抑制・UNSAFE-OUTPUT 先頭行は driver S-N13/S-N24 側。MIN-2）", () => {
+  const { hits } = scanDocs([doc("xx-yy here")], NEEDLE_LIST);
+  expect(hits.length).toBe(1);
+  expect(hits[0]?.match).toBe("xx-yy"); // --show-match がそのまま出す一致文字列
 });
 
 test("K-N6 read callback が例外を投げる → 赤（握り潰さない）", () => {
@@ -276,7 +313,7 @@ test("K-N8 pack-tarball の許可された entry 名の内容だけに needle �
   expect(r.hits.length).toBeGreaterThanOrEqual(1);
 });
 
-test("K-P3/K9 pack-tarball が present なら entry + 内容の走査 doc 数 > 0。0 件なら赤", () => {
+test("K-P3 pack-tarball が present なら entry + 内容の走査 doc 数 > 0。0 件なら赤（K9）", () => {
   const good = scanArtifacts({ artifacts: baseArtifacts(), needles: NEEDLE_LIST, allowedExposures: [], read: cleanRead });
   expect((good.counts["pack-tarball"] ?? 0)).toBeGreaterThan(0);
   const artifacts = baseArtifacts().map((a) => (a.kind === "pack-tarball" ? { ...a, paths: [] } : a));

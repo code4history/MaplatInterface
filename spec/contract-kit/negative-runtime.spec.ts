@@ -39,8 +39,14 @@ test("V-P1 displayMode capability が無ければ not-applicable として結果
   expect(res.results[0]?.id).toBe("CK-MODE-INVALID");
 });
 
-test("V-P2 INVALID_DISPLAY_MODE_INPUTS は fixture に閉じ、公開語彙・第 3 語彙を含まない", () => {
+test("V-P2 INVALID_DISPLAY_MODE_INPUTS は設計 §5.5 V1 の 3 値と同一で、公開語彙・第 3 語彙を含まない", () => {
+  // 値集合の同一性は JSON.stringify で検査しない（undefined が消える）。`in` と添字アクセスで検査する（MAJ-3）。
   expect(INVALID_DISPLAY_MODE_INPUTS).toHaveLength(3);
+  expect(2 in INVALID_DISPLAY_MODE_INPUTS).toBe(true); // 末尾要素が添字 2 として実在する（sparse でない）
+  expect(INVALID_DISPLAY_MODE_INPUTS[0]).toBe("not-a-mode");
+  expect(INVALID_DISPLAY_MODE_INPUTS[1]).toEqual([0, 1]);
+  expect(INVALID_DISPLAY_MODE_INPUTS[2]).toBeUndefined(); // undefined（null や省略とは区別される）
+  expect(INVALID_DISPLAY_MODE_INPUTS[2]).not.toBeNull(); // null への退化を検出する歯
   for (const v of INVALID_DISPLAY_MODE_INPUTS) {
     expect(["maplat", "map-warp"].includes(v as string)).toBe(false);
   }
