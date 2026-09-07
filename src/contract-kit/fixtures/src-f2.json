@@ -1,0 +1,47 @@
+{
+  "id": "SRC-F2",
+  "cases": [
+    {
+      "case": "base",
+      "input": {
+        "source": { "mapID": "f2", "maptype": "base", "url": "https://example.invalid/{z}/{x}/{y}.png", "thumbnail": "./tmbs/f2.jpg", "label": { "ja": "F2" } },
+        "commonOptions": { "fake": false }
+      },
+      "files": {},
+      "expected": {
+        "fetch_urls_include": [],
+        "fetch_urls_exclude": [],
+        "observables": {
+          "mapID": "f2",
+          "isBasemap": true,
+          "isWmts": true,
+          "label": { "ja": "F2" },
+          "width": null,
+          "height": null,
+          "ctorStatics": ["isBasemap", "isWmts", "isMapLibre", "createAsync"]
+        }
+      }
+    },
+    {
+      "case": "overlay",
+      "input": {
+        "source": { "mapID": "f2o", "maptype": "overlay", "url": "https://example.invalid/{z}/{x}/{y}.png", "label": { "ja": "F2o" } },
+        "commonOptions": { "fake": false }
+      },
+      "files": {},
+      "expected": {
+        "fetch_urls_include": ["./tmbs/f2o.jpg"],
+        "fetch_urls_exclude": [],
+        "observables": {
+          "mapID": "f2o",
+          "isBasemap": false,
+          "isWmts": true,
+          "label": { "ja": "F2o" },
+          "width": null,
+          "height": null,
+          "ctorStatics": ["isBasemap", "isWmts", "isMapLibre", "createAsync"]
+        }
+      }
+    }
+  ]
+}

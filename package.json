@@ -10,15 +10,24 @@
   "files": ["dist/"],
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./core": { "types": "./dist/core/index.d.ts", "import": "./dist/core/index.js" }
+    "./core": { "types": "./dist/core/index.d.ts", "import": "./dist/core/index.js" },
+    "./contract-kit": { "types": "./dist/contract-kit/index.d.ts", "import": "./dist/contract-kit/index.js" }
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run && node --test scripts/verify/exports-manifest.test.mjs",
-    "build": "vite build && tsc -p tsconfig.build.json",
+    "test": "node scripts/verify/run-groups.mjs test",
+    "build": "vite build && tsc -p tsconfig.build.json && node scripts/build/copy-kit-assets.mjs",
     "verify:exports-manifest": "node scripts/verify/exports-manifest.mjs",
-    "verify": "node scripts/verify/exports-manifest.mjs"
+    "verify:pack-allowlist": "node scripts/verify/pack-allowlist.mjs",
+    "verify": "node scripts/verify/run-groups.mjs verify"
   },
   "repository": { "type": "git", "url": "git+https://github.com/code4history/MaplatInterface.git" },
-  "devDependencies": { "typescript": "5.9.3", "vite": "7.3.6", "vitest": "3.2.7" }
+  "devDependencies": {
+    "@maplat/core": "1.0.0",
+    "jsdom": "30.0.1",
+    "ol": "10.10.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "3.2.7"
+  }
 }

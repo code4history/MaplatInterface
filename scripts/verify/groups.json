@@ -1,0 +1,13 @@
+{
+  "verify": [
+    { "name": "exports-manifest", "command": ["node", "scripts/verify/exports-manifest.mjs"] },
+    { "name": "pack-allowlist", "command": ["node", "scripts/verify/pack-allowlist.mjs"] }
+  ],
+  "test": [
+    { "name": "vitest", "command": ["node", "node_modules/vitest/vitest.mjs", "run"] },
+    { "name": "exports-manifest-test", "file": "scripts/verify/exports-manifest.test.mjs" },
+    { "name": "pack-allowlist-test", "file": "scripts/verify/pack-allowlist.test.mjs" },
+    { "name": "copy-kit-assets-test", "file": "scripts/build/copy-kit-assets.test.mjs" },
+    { "name": "run-groups-test", "file": "scripts/verify/run-groups.test.mjs" }
+  ]
+}

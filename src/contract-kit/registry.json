@@ -1,0 +1,26 @@
+[
+  { "id": "CK-SRC-F1-default",   "manifest_item_ids": ["data-contract:SRC-F1"], "applies_to": "all" },
+  { "id": "CK-SRC-F2-base",      "manifest_item_ids": ["data-contract:SRC-F2"], "applies_to": "all" },
+  { "id": "CK-SRC-F2-overlay",   "manifest_item_ids": ["data-contract:SRC-F2"], "applies_to": "all" },
+  { "id": "CK-SRC-F3-base",      "manifest_item_ids": ["data-contract:SRC-F3"], "applies_to": "all" },
+  { "id": "CK-SRC-F3-overlay",   "manifest_item_ids": ["data-contract:SRC-F3"], "applies_to": "all" },
+  { "id": "CK-SRC-F4-default",   "manifest_item_ids": ["data-contract:SRC-F4"], "applies_to": "all" },
+  { "id": "CK-SRC-F5-default",   "manifest_item_ids": ["data-contract:SRC-F5"], "applies_to": "all" },
+  { "id": "CK-SRC-STATIC",
+    "manifest_item_ids": ["source-member:createAsync", "source-member:isBasemap", "source-member:isWmts", "source-member:isMapLibre"],
+    "applies_to": "all" },
+  { "id": "CK-MARKER-1", "manifest_item_ids": ["map-member:setMarker", "map-member:getSource"], "applies_to": "all" },
+  { "id": "CK-MARKER-2", "manifest_item_ids": ["map-member:setMarker", "map-member:getSource"], "applies_to": "all" },
+  { "id": "CK-MARKER-3", "manifest_item_ids": ["map-member:resetMarker", "map-member:getSource"], "applies_to": "all" },
+  { "id": "CK-MARKER-4", "manifest_item_ids": ["map-member:setMarker", "map-member:getSource"], "applies_to": "all" },
+  { "id": "CK-MODULE-EXPORTS",
+    "manifest_item_ids": [
+      "export:MaplatApp", "export:MaplatMap", "export:mapSourceFactory", "export:CustomEvent",
+      "export:GPSErrorEvent", "export:GPSRequestEvent", "export:GPSResultEvent", "export:createElement",
+      "export:sanitizeHtml", "export:escapeAttr", "export:toPlainText", "export:buildSlideAttrs", "export:assets"
+    ],
+    "applies_to": "all" },
+  { "id": "CK-MODULE-CE", "manifest_item_ids": ["export:createElement"], "applies_to": "all" },
+  { "id": "CK-MODE-INVALID", "manifest_item_ids": [], "applies_to": "capability:displayMode" },
+  { "id": "CK-ERR-MAPBOX",   "manifest_item_ids": [], "applies_to": "adapter:pro" }
+]

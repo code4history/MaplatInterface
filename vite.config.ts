@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   build: {
     lib: {
-      entry: { index: "src/index.ts", "core/index": "src/core/index.ts" },
+      entry: { index: "src/index.ts", "core/index": "src/core/index.ts", "contract-kit/index": "src/contract-kit/index.ts" },
       formats: ["es"],
       fileName: (_format, entryName) => `${entryName}.js`
     },
@@ -11,6 +11,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["spec/**/*.test.ts"]
+    include: ["spec/**/*.{test,spec}.ts"],
+    setupFiles: ["spec/setup-dom.ts"],
+    server: { deps: { inline: ["@maplat/core"] } }
   }
 });

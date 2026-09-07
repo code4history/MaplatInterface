@@ -5,7 +5,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const EXPECTED_KEYS = [".", "./core"];
+export const EXPECTED_KEYS = [".", "./core", "./contract-kit"];
 export const CONDITIONS = ["types", "import"];
 
 /**

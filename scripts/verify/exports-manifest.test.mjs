@@ -9,19 +9,20 @@ function goodPkg() {
     name: "@maplat/interface",
     exports: {
       ".": { types: "./dist/index.d.ts", import: "./dist/index.js" },
-      "./core": { types: "./dist/core/index.d.ts", import: "./dist/core/index.js" }
+      "./core": { types: "./dist/core/index.d.ts", import: "./dist/core/index.js" },
+      "./contract-kit": { types: "./dist/contract-kit/index.d.ts", import: "./dist/contract-kit/index.js" }
     }
   };
 }
 const allExist = () => true;
 
-test("正例: key 集合が {., ./core} で 4 ファイルが実在すれば緑（keys=2 files=4）", () => {
-  assert.deepEqual([...EXPECTED_KEYS].sort(), [".", "./core"]);
+test("正例: key 集合が {., ./core, ./contract-kit} で 6 ファイルが実在すれば緑（keys=3 files=6）", () => {
+  assert.deepEqual([...EXPECTED_KEYS].sort(), [".", "./contract-kit", "./core"]);
   const r = checkExports(goodPkg(), allExist);
   assert.deepEqual(r.failures, []);
   assert.equal(r.ok, true);
-  assert.equal(r.keys, 2);
-  assert.equal(r.files, 4);
+  assert.equal(r.keys, 3);
+  assert.equal(r.files, 6);
 });
 
 test("反例: key 欠落（./core 無し）と exports 不在は赤", () => {
@@ -39,7 +40,7 @@ test("反例: 指すファイルが dist に無ければ赤", () => {
   const r = checkExports(goodPkg(), (p) => p !== "./dist/core/index.js");
   assert.equal(r.ok, false);
   assert.ok(r.failures.some((f) => f.includes("./dist/core/index.js")));
-  assert.equal(r.files, 3);
+  assert.equal(r.files, 5);
 });
 
 test("反例: 余分な key（./extra）は赤", () => {

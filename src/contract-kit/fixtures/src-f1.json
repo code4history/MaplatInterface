@@ -1,0 +1,23 @@
+{
+  "id": "SRC-F1",
+  "cases": [
+    {
+      "case": "default",
+      "input": { "source": "osm", "commonOptions": { "fake": false } },
+      "files": {},
+      "expected": {
+        "fetch_urls_include": [],
+        "fetch_urls_exclude": [],
+        "observables": {
+          "mapID": "osm",
+          "isBasemap": true,
+          "isWmts": true,
+          "label": { "ja": "OSM(現在)", "en": "OSM(Now)" },
+          "width": null,
+          "height": null,
+          "ctorStatics": ["isBasemap", "isWmts", "isMapLibre", "createAsync"]
+        }
+      }
+    }
+  ]
+}

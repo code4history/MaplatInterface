@@ -1,0 +1,60 @@
+{
+  "id": "SRC-F3",
+  "cases": [
+    {
+      "case": "base",
+      "input": {
+        "source": { "mapID": "f3", "settingFile": "maps/f3.json", "title": "APP" },
+        "commonOptions": { "fake": false }
+      },
+      "files": {
+        "maps/f3.json": {
+          "maptype": "base",
+          "url": "https://example.invalid/{z}/{x}/{y}.png",
+          "label": { "ja": "L" },
+          "thumbnail": "./tmbs/f3.jpg"
+        }
+      },
+      "expected": {
+        "fetch_urls_include": ["maps/f3.json"],
+        "fetch_urls_exclude": ["./tmbs/f3.jpg"],
+        "observables": {
+          "mapID": "f3",
+          "isBasemap": true,
+          "isWmts": true,
+          "label": { "ja": "L" },
+          "width": null,
+          "height": null,
+          "ctorStatics": ["isBasemap", "isWmts", "isMapLibre", "createAsync"]
+        }
+      }
+    },
+    {
+      "case": "overlay",
+      "input": {
+        "source": { "mapID": "f3o", "settingFile": "maps/f3o.json" },
+        "commonOptions": { "fake": false }
+      },
+      "files": {
+        "maps/f3o.json": {
+          "maptype": "overlay",
+          "url": "https://example.invalid/{z}/{x}/{y}.png",
+          "label": { "ja": "Lo" }
+        }
+      },
+      "expected": {
+        "fetch_urls_include": ["maps/f3o.json", "./tmbs/f3o.jpg"],
+        "fetch_urls_exclude": [],
+        "observables": {
+          "mapID": "f3o",
+          "isBasemap": false,
+          "isWmts": true,
+          "label": { "ja": "Lo" },
+          "width": null,
+          "height": null,
+          "ctorStatics": ["isBasemap", "isWmts", "isMapLibre", "createAsync"]
+        }
+      }
+    }
+  ]
+}
